@@ -9,16 +9,26 @@ $conn = new mysqli("localhost", "root", "", "logintest");
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+parse_str(file_get_contents("php://input"), $_POST);
+$question = $_POST['question'];
+$insert_sql = "INSERT INTO questions (question) VALUES ('$question')"  ;
 
+if (mysqli_query($conn, $insert_sql)) {
+   // echo "New record created successfully";
+} else {
+    die("Error: " . $insert_sql . "<br>" . mysqli_error($conn));
+}
 
 $sql = "SELECT * FROM questions";
 if($result = mysqli_query($conn, $sql)){
     if(mysqli_num_rows($result) > 0){
+        echo   "<table><tr><th>Id</th><th>Intrebare</th></tr>";
         while($row = mysqli_fetch_array($result)){
-            echo   $row['id'] . "</td>";
-            echo   $row['question'] . "</td>";
-            echo "<br />";
+            echo   "<tr><td>" .$row['id'] . ".</td>";
+            echo   " <td>". $row['question'] . "</td></tr>";
+
         }
+        echo "</table>";
         // Free result set
         mysqli_free_result($result);
     } else{
